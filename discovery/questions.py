@@ -160,7 +160,7 @@ QUESTIONS = [
              "placeholder": "Example: We have photos and packages, but need help writing the pages..."},
             {"name": "website_project_budget", "label": "What is your initial website project budget?", "type": "textarea", "required": False,
              "helper": "A range is enough for now. This helps match the website scope with what is realistic for design, pages, content, hosting, domain, email setup, and future support.",
-             "placeholder": "Example: KES 30,000 - 80,000, or not sure yet..."},
+             "placeholder": "Example: KES 50,000 - 70,000, or not sure yet..."},
             {"name": "website_updates", "label": "Who currently manages updates on your website or online platforms?", "type": "textarea", "required": False,
              "helper": "This may include packages, prices, photos, blogs, WhatsApp links, inquiry forms, landing pages, or destination pages.",
              "placeholder": "Who updates the website and online pages?"},
