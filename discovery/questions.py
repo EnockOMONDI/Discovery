@@ -58,9 +58,6 @@ QUESTIONS = [
              "helper": "Use the email where you would like me to send next steps or clarifications.", "placeholder": "name@example.com"},
             {"name": "phone", "label": "Phone or WhatsApp number", "type": "text", "required": False,
              "helper": "Optional, but helpful if WhatsApp is easier for quick clarification.", "placeholder": "+254..."},
-            {"name": "website", "label": "Website or main social media page", "type": "text", "required": False,
-             "helper": "You can paste a link, type a handle, or simply write the platform name if you are not sure of the exact URL. For example: www.company.com, @companytravel, Facebook: Company Travel, or WhatsApp only.",
-             "placeholder": "Website link, social handle, or platform name"},
         ],
     },
     {
@@ -224,6 +221,8 @@ QUESTIONS = [
 ]
 
 for section in QUESTIONS:
+    if section["slug"] == "basics":
+        continue
     section["fields"].append({
         "name": f"{section['slug']}_anything_else",
         "label": f"Anything else we have left out in {section['title'].lower()}?",

@@ -30,7 +30,6 @@ class DiscoveryFormTests(TestCase):
 
     def test_valid_submission_saves_response(self):
         response = self.client.post(reverse("discovery_form"), valid_payload(
-            website="@sampletravel",
             priority_offers_other="Pilgrimages",
             ideal_clients_other="NGOs",
             marketing_platforms_other="YouTube",
@@ -38,9 +37,10 @@ class DiscoveryFormTests(TestCase):
         self.assertEqual(response.status_code, 302)
         saved = DiscoveryResponse.objects.get()
         self.assertEqual(saved.company_name, "Sample Travel")
-        self.assertEqual(saved.website, "@sampletravel")
         self.assertEqual(saved.answers["priority_offers"], ["safaris", "beach_holidays"])
         self.assertEqual(saved.answers["priority_offers_other"], "Pilgrimages")
+        self.assertNotIn("basics_anything_else", saved.answers)
+        self.assertNotIn("website", saved.answers)
         self.assertTrue(saved.consent)
 
     def test_required_fields_are_validated(self):
