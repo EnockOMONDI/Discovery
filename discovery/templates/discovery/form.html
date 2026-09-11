@@ -37,7 +37,7 @@
             </div>
         </aside>
 
-        <form class="form-card" method="post" novalidate>
+        <form class="form-card" method="post" novalidate data-autosave-key="travel-discovery-form-v2">
             {% csrf_token %}
             <input class="honeypot" type="text" name="company_site" tabindex="-1" autocomplete="off">
             {% if errors|get_item:"__all__" %}<div class="global-error">{{ errors|get_item:"__all__" }}</div>{% endif %}

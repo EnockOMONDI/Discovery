@@ -1,5 +1,5 @@
 from django.core.exceptions import ValidationError
-from django.core.validators import URLValidator, validate_email
+from django.core.validators import validate_email
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_http_methods
 from .models import DiscoveryResponse
@@ -23,12 +23,6 @@ def _collect_answers(post_data):
             validate_email(answers["email"])
         except ValidationError:
             errors["email"] = "Enter a valid email address."
-
-    if answers.get("website"):
-        try:
-            URLValidator()(answers["website"])
-        except ValidationError:
-            errors["website"] = "Enter a valid website link starting with https:// or http://."
 
     if post_data.get("company_site", ""):
         errors["__all__"] = "Unable to accept this submission."
