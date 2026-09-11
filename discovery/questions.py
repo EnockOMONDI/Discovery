@@ -223,7 +223,7 @@ QUESTIONS = [
              "helper": "This helps avoid confusion later. Mention what you expect me to handle daily, weekly, or monthly.",
              "placeholder": "What should I own, and what stays with the team?"},
             {"name": "project_start_timeline", "label": "How soon would you like the project to start?", "type": "textarea", "required": False,
-             "helper": "A simple answer is okay. For example: immediately, next week, next month, after approval, or once the budget is confirmed.",
+             "helper": "A simple answer is okay: immediately, next week, next month, or add an exact date.",
              "placeholder": "Example: Immediately, next week, or after we agree on scope..."},
             {"name": "extra_notes", "label": "Anything else I should know before we begin?", "type": "textarea", "required": False,
              "helper": "Add any background, concerns, expectations, or context that did not fit above.",
