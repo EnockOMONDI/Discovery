@@ -1,0 +1,54 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; {{ opts.verbose_name_plural|capfirst }}
+</div>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <form method="get" style="margin-bottom: 1rem;">
+        <label for="response-search" class="visually-hidden">Search responses</label>
+        <input id="response-search" type="search" name="q" value="{{ query }}" placeholder="Search company, contact, email or phone" style="min-width: min(100%, 24rem);">
+        <button type="submit" class="button">Search</button>
+        {% if query %}<a href="{% url 'admin:discovery_discoveryresponse_changelist' %}" class="button">Clear</a>{% endif %}
+    </form>
+
+    <div class="module">
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Company</th>
+                    <th scope="col">Contact</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Submitted</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for response in responses %}
+                    <tr>
+                        <th scope="row">
+                            <a href="{% url 'admin:discovery_discoveryresponse_change' response.pk %}">{{ response.company_name }}</a>
+                        </th>
+                        <td>{{ response.contact_person }}</td>
+                        <td>{{ response.email }}</td>
+                        <td>{{ response.get_status_display }}</td>
+                        <td>{{ response.created_at|date:"M j, Y, g:i a" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No discovery responses found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="paginator">Showing up to 100 latest responses.</p>
+</div>
+{% endblock %}
