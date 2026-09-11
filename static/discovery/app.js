@@ -8,6 +8,8 @@ const backButton = document.getElementById("backButton");
 const nextButton = document.getElementById("nextButton");
 const submitButton = document.getElementById("submitButton");
 const form = document.querySelector("form[data-autosave-key]");
+const introToggle = document.querySelector(".intro-toggle");
+const sidebar = document.querySelector("aside");
 const autosaveKey = form?.dataset.autosaveKey;
 let currentStep = Number(script?.dataset.initialStep || 0);
 
@@ -29,6 +31,12 @@ backButton.addEventListener("click", () => showStep(currentStep - 1));
 nextButton.addEventListener("click", () => showStep(currentStep + 1));
 stepButtons.forEach((button) => {
     button.addEventListener("click", () => showStep(Number(button.dataset.stepJump)));
+});
+
+introToggle?.addEventListener("click", () => {
+    const isOpen = sidebar?.classList.toggle("is-intro-open");
+    introToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    introToggle.textContent = isOpen ? "Hide note" : "About this form";
 });
 
 function readSavedForm() {

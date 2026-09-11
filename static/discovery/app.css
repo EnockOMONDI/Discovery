@@ -22,6 +22,7 @@ body {
         linear-gradient(135deg, #f7fbf7 0%, #ffffff 44%, #eef6f3 100%);
     min-height: 100vh;
     animation: pageFade .35s ease both;
+    overflow-x: hidden;
 }
 
 .shell {
@@ -85,6 +86,7 @@ aside {
     backdrop-filter: blur(18px);
     border-radius: 18px;
     padding: 22px;
+    overflow: hidden;
     box-shadow: 0 24px 70px rgba(18, 70, 55, .08);
     animation: riseIn .38s ease both;
 }
@@ -103,6 +105,10 @@ h1 {
     font-size: 1rem;
     line-height: 1.65;
     margin-bottom: 22px;
+}
+
+.intro-toggle {
+    display: none;
 }
 
 .progress-copy {
@@ -470,9 +476,10 @@ a {
 }
 
 @media (max-width: 860px) {
-    .layout {
+.layout {
         grid-template-columns: 1fr;
         gap: 14px;
+        min-width: 0;
     }
 
     aside {
@@ -483,19 +490,37 @@ a {
 
     aside h1 {
         max-width: none;
-        font-size: 1.45rem;
+        font-size: clamp(1.32rem, 7vw, 1.7rem);
         line-height: 1.12;
         margin-bottom: 8px;
     }
 
+    .intro-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: auto;
+        min-height: 38px;
+        margin-bottom: 12px;
+        padding: 8px 12px;
+        border: 1px solid rgba(30, 107, 87, .16);
+        border-radius: 999px;
+        background: rgba(239, 247, 243, .82);
+        color: var(--green-dark);
+        box-shadow: none;
+        font-size: .9rem;
+    }
+
     .opening {
+        display: none;
         font-size: .94rem;
         line-height: 1.5;
         margin-bottom: 14px;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+    }
+
+    aside.is-intro-open .opening {
+        display: block;
+        animation: sectionIn .2s ease both;
     }
 
     .topbar {
@@ -527,18 +552,23 @@ a {
     .steps {
         display: flex;
         gap: 8px;
+        width: 100%;
+        max-width: 100%;
         overflow-x: auto;
         padding-bottom: 4px;
         margin-top: 10px;
         scroll-snap-type: x proximity;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
     }
 
     .step-dot {
         flex: 0 0 auto;
         width: auto;
-        max-width: 220px;
+        max-width: 188px;
         white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         padding: 9px 12px;
         border: 1px solid rgba(30, 107, 87, .12);
         background: rgba(255, 255, 255, .76);
@@ -553,13 +583,23 @@ a {
 
 @media (max-width: 560px) {
     .shell {
-        width: min(100% - 18px, 1120px);
+        width: 100%;
+        padding: 10px 10px 34px;
         padding-top: 12px;
+    }
+
+    .topbar {
+        padding: 0 2px;
+    }
+
+    .pill {
+        max-width: 100%;
+        white-space: normal;
     }
 
     .choices { grid-template-columns: 1fr; }
     .actions { flex-direction: column-reverse; align-items: stretch; }
-    button { width: 100%; }
+    .actions button { width: 100%; }
 
     .section {
         padding: 20px 16px;
@@ -572,5 +612,15 @@ a {
     .form-card,
     aside {
         border-radius: 14px;
+    }
+
+    label,
+    .label {
+        line-height: 1.25;
+    }
+
+    .helper {
+        font-size: .92rem;
+        padding-left: 10px;
     }
 }
