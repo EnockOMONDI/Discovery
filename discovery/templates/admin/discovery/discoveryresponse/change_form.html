@@ -1,0 +1,136 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+    <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+    &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+    &rsaquo; <a href="{% url 'admin:discovery_discoveryresponse_changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>
+    &rsaquo; {{ response.company_name }}
+</div>
+{% endblock %}
+
+{% block content %}
+<style>
+    .response-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .summary-item,
+    .answer-section {
+        border: 1px solid var(--hairline-color);
+        border-radius: 6px;
+        background: var(--body-bg);
+    }
+
+    .summary-item {
+        padding: 12px;
+    }
+
+    .summary-label {
+        color: var(--body-quiet-color);
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .summary-value {
+        margin-top: 6px;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    .answer-section {
+        margin-bottom: 18px;
+        overflow: hidden;
+    }
+
+    .answer-section h2 {
+        margin: 0;
+        padding: 12px 14px;
+        background: var(--darkened-bg);
+        font-size: 1rem;
+    }
+
+    .answer-row {
+        display: grid;
+        grid-template-columns: minmax(200px, 32%) minmax(0, 1fr);
+        gap: 16px;
+        padding: 12px 14px;
+        border-top: 1px solid var(--hairline-color);
+    }
+
+    .answer-label {
+        font-weight: 700;
+    }
+
+    .answer-value {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .admin-actions {
+        margin: 0 0 18px;
+    }
+
+    @media (max-width: 700px) {
+        .answer-row {
+            grid-template-columns: 1fr;
+            gap: 6px;
+        }
+    }
+</style>
+
+<div id="content-main">
+    <p class="admin-actions">
+        <a href="{% url 'admin:discovery_discoveryresponse_changelist' %}" class="button">&larr; Back to responses</a>
+    </p>
+
+    <div class="response-summary">
+        <div class="summary-item">
+            <div class="summary-label">Company</div>
+            <div class="summary-value">{{ response.company_name }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Contact</div>
+            <div class="summary-value">{{ response.contact_person }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Email</div>
+            <div class="summary-value">{{ response.email }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Phone</div>
+            <div class="summary-value">{{ response.phone|default:"Not provided" }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Status</div>
+            <div class="summary-value">{{ response.get_status_display }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Submitted</div>
+            <div class="summary-value">{{ response.created_at|date:"M j, Y, g:i a" }}</div>
+        </div>
+        <div class="summary-item">
+            <div class="summary-label">Reference</div>
+            <div class="summary-value">{{ response.reference }}</div>
+        </div>
+    </div>
+
+    {% for section in answer_sections %}
+        <section class="answer-section">
+            <h2>{{ section.title }}</h2>
+            {% for row in section.rows %}
+                <div class="answer-row">
+                    <div class="answer-label">{{ row.label }}</div>
+                    <div class="answer-value">{{ row.value }}</div>
+                </div>
+            {% endfor %}
+        </section>
+    {% endfor %}
+</div>
+{% endblock %}

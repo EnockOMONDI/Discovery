@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.conf import settings
 from django.db.models import Q
+from django.http import Http404
 from django.template.response import TemplateResponse
 from .models import DiscoveryResponse
+from .questions import FIELD_LOOKUP, QUESTIONS, choice_label
 
 admin.site.site_header = settings.ADMIN_SITE_HEADER
 admin.site.site_title = "Travel Discovery"
@@ -31,6 +33,43 @@ class DiscoveryResponseAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return request.user.is_superuser
 
+    def _render_answer_value(self, field, value):
+        if value in ("", None, []):
+            return "Not answered"
+        if isinstance(value, list):
+            return ", ".join(choice_label(field, item) for item in value) or "Not answered"
+        if field.get("choices"):
+            return choice_label(field, value)
+        return str(value)
+
+    def _answer_sections(self, response):
+        answers = response.answers or {}
+        sections = []
+        seen = set()
+        for section in QUESTIONS:
+            rows = []
+            for field in section["fields"]:
+                name = field["name"]
+                seen.add(name)
+                rows.append({
+                    "label": field["label"],
+                    "value": self._render_answer_value(field, answers.get(name)),
+                })
+            sections.append({"title": section["title"], "rows": rows})
+
+        extra_rows = []
+        for name, value in answers.items():
+            if name in seen:
+                continue
+            field = FIELD_LOOKUP.get(name, {})
+            extra_rows.append({
+                "label": field.get("label", name.replace("_", " ").title()),
+                "value": self._render_answer_value(field, value),
+            })
+        if extra_rows:
+            sections.append({"title": "Other Answers", "rows": extra_rows})
+        return sections
+
     def changelist_view(self, request, extra_context=None):
         query = request.GET.get("q", "").strip()
         responses = DiscoveryResponse.objects.order_by("-created_at")
@@ -51,3 +90,18 @@ class DiscoveryResponseAdmin(admin.ModelAdmin):
         if extra_context:
             context.update(extra_context)
         return TemplateResponse(request, "admin/discovery/discoveryresponse/change_list.html", context)
+
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        response = self.get_object(request, object_id)
+        if response is None:
+            raise Http404("Discovery response not found")
+        context = {
+            **self.admin_site.each_context(request),
+            "opts": self.model._meta,
+            "title": response.company_name,
+            "response": response,
+            "answer_sections": self._answer_sections(response),
+        }
+        if extra_context:
+            context.update(extra_context)
+        return TemplateResponse(request, "admin/discovery/discoveryresponse/change_form.html", context)

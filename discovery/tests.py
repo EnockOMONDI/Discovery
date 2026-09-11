@@ -28,6 +28,10 @@ class DiscoveryFormTests(TestCase):
         self.assertContains(response, "Travel Business Discovery")
         self.assertContains(response, "Step 1 of 7")
 
+    def test_form_allows_head_checks(self):
+        response = self.client.head(reverse("discovery_form"))
+        self.assertEqual(response.status_code, 200)
+
     def test_valid_submission_saves_response(self):
         response = self.client.post(reverse("discovery_form"), valid_payload(
             priority_offers_other="Pilgrimages",
@@ -65,3 +69,4 @@ class DiscoveryFormTests(TestCase):
         self.assertEqual(list_response.status_code, 200)
         self.assertEqual(detail_response.status_code, 200)
         self.assertContains(detail_response, "Sample Travel", status_code=200)
+        self.assertContains(detail_response, "What are your main services or packages right now?", status_code=200)

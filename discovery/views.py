@@ -33,7 +33,7 @@ def _collect_answers(post_data):
     return answers, errors
 
 
-@require_http_methods(["GET", "POST"])
+@require_http_methods(["GET", "POST", "HEAD"])
 def discovery_form(request):
     values = {}
     errors = {}
