@@ -223,6 +223,16 @@ QUESTIONS = [
     },
 ]
 
+for section in QUESTIONS:
+    section["fields"].append({
+        "name": f"{section['slug']}_anything_else",
+        "label": f"Anything else we have left out in {section['title'].lower()}?",
+        "type": "textarea",
+        "required": False,
+        "helper": "You can write any extra thoughts, missing details, concerns, or ideas for this section. If there is nothing else, leave it blank and click Next.",
+        "placeholder": "Optional: add anything else we should know for this section...",
+    })
+
 FIELD_LOOKUP = {field["name"]: field for section in QUESTIONS for field in section["fields"]}
 
 
