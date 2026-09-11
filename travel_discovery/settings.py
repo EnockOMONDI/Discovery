@@ -69,14 +69,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "travel_discovery.wsgi.application"
 
 
+DATABASE_URL = os.getenv("DATABASE_URL") or f"sqlite:///{BASE_DIR / 'db.sqlite3'}"
+USING_SUPABASE_POOLER = "pooler.supabase.com" in DATABASE_URL or ":6543" in DATABASE_URL
+DATABASE_CONN_MAX_AGE = int(os.getenv("DATABASE_CONN_MAX_AGE", "0" if USING_SUPABASE_POOLER else "60"))
+
 DATABASES = {
     "default": dj_database_url.parse(
-        os.getenv("DATABASE_URL") or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=60,
-        conn_health_checks=True,
+        DATABASE_URL,
+        conn_max_age=DATABASE_CONN_MAX_AGE,
+        conn_health_checks=DATABASE_CONN_MAX_AGE > 0,
         ssl_require=DJANGO_ENV == "production",
     )
 }
+
+if USING_SUPABASE_POOLER:
+    DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 
 
 AUTH_PASSWORD_VALIDATORS = [
