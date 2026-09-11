@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Discovery Submitted</title>
+    <link rel="stylesheet" href="{% static 'discovery/app.css' %}">
+</head>
+<body class="thanks-body">
+    <main class="thanks-card">
+        <div class="mark thanks-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 6L9 17l-5-5"></path>
+            </svg>
+        </div>
+        <h1>Thank you. The discovery response has been received.</h1>
+        <p>I’ll review the answers and use them to prepare clearer recommendations, priorities, and next steps.</p>
+        <div class="reference">Reference: {{ reference }}</div>
+        <a href="{% url 'discovery_form' %}">Submit another response</a>
+    </main>
+</body>
+</html>

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: travel-discovery-app
+    runtime: python
+    plan: free
+    buildCommand: bash build.sh
+    startCommand: python manage.py migrate --noinput && gunicorn travel_discovery.wsgi:application
+    healthCheckPath: /health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.14
+      - key: DJANGO_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: WEB_CONCURRENCY
+        value: "1"

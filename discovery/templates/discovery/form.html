@@ -1,0 +1,110 @@
+{% load static discovery_extras %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Travel Business Discovery</title>
+    <link rel="stylesheet" href="{% static 'discovery/app.css' %}">
+</head>
+<body>
+<main class="shell">
+    <div class="topbar">
+        <div class="brand">
+            <div class="mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 11l18-8-8 18-2-8-8-2z"></path>
+                </svg>
+            </div>
+            <span>Travel Discovery</span>
+        </div>
+        <span class="pill">For travel, tours and hospitality teams</span>
+    </div>
+
+    <div class="layout">
+        <aside>
+            <h1>Travel Business Discovery</h1>
+            <p class="opening">Hi team,<br>Before we begin, I’d like to understand how your travel business currently operates, what is already working, and where you need the most support. These questions will help me understand your services, systems, marketing activities, and the kind of day-to-day help you expect from me.</p>
+            <div class="progress-copy">
+                <span id="stepLabel">Step 1 of {{ sections|length }}</span>
+                <span id="stepPercent">14%</span>
+            </div>
+            <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+            <div class="steps" aria-label="Form sections">
+                {% for section in sections %}
+                    <button class="step-dot{% if forloop.first %} is-active{% endif %}" type="button" data-step-jump="{{ forloop.counter0 }}">{{ section.title }}</button>
+                {% endfor %}
+            </div>
+        </aside>
+
+        <form class="form-card" method="post" novalidate>
+            {% csrf_token %}
+            <input class="honeypot" type="text" name="company_site" tabindex="-1" autocomplete="off">
+            {% if errors|get_item:"__all__" %}<div class="global-error">{{ errors|get_item:"__all__" }}</div>{% endif %}
+
+            {% for section in sections %}
+                <section class="section{% if forloop.first %} is-active{% endif %}" data-step="{{ forloop.counter0 }}">
+                    <div class="eyebrow">{{ section.eyebrow }}</div>
+                    <h2>{{ section.title }}</h2>
+                    <p class="section-intro">{{ section.intro }}</p>
+
+                    {% for field in section.fields %}
+                        <div class="field{% if errors|get_item:field.name %} has-error{% endif %}" data-field="{{ field.name }}">
+                            {% if field.type == "checkboxes" or field.type == "radio" %}
+                                <div class="label">{{ field.label }}{% if field.required %} <span class="required">*</span>{% endif %}</div>
+                            {% else %}
+                                <label for="{{ field.name }}">{{ field.label }}{% if field.required %} <span class="required">*</span>{% endif %}</label>
+                            {% endif %}
+                            <div class="helper">{{ field.helper }}</div>
+
+                            {% if field.type == "textarea" %}
+                                <textarea id="{{ field.name }}" name="{{ field.name }}" placeholder="{{ field.placeholder }}">{{ values|get_item:field.name }}</textarea>
+                            {% elif field.type == "checkboxes" %}
+                                <div class="choices">
+                                    {% for value, label in field.choices %}
+                                        <label class="choice">
+                                            <input type="checkbox" name="{{ field.name }}" value="{{ value }}" {% if value in values|get_item:field.name %}checked{% endif %}>
+                                            <span>{{ label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% elif field.type == "radio" %}
+                                <div class="choices">
+                                    {% for value, label in field.choices %}
+                                        <label class="choice">
+                                            <input type="radio" name="{{ field.name }}" value="{{ value }}" {% if values|get_item:field.name == value %}checked{% endif %}>
+                                            <span>{{ label }}</span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <input id="{{ field.name }}" type="{{ field.type }}" name="{{ field.name }}" value="{{ values|get_item:field.name }}" placeholder="{{ field.placeholder }}">
+                            {% endif %}
+
+                            {% if errors|get_item:field.name %}<div class="error">{{ errors|get_item:field.name }}</div>{% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% if forloop.last %}
+                        <label class="consent">
+                            <input type="checkbox" name="consent" value="yes" {% if request.POST.consent == "yes" %}checked{% endif %}>
+                            <span>I confirm that these answers can be stored and used to prepare follow-up recommendations, scope, and next steps.</span>
+                        </label>
+                        {% if errors.consent %}<div class="error">{{ errors.consent }}</div>{% endif %}
+                    {% endif %}
+                </section>
+            {% endfor %}
+
+            <div class="actions">
+                <button class="secondary" type="button" id="backButton">Back</button>
+                <div>
+                    <button class="primary next-button" type="button" id="nextButton">Next</button>
+                    <button class="primary submit-button" type="submit" id="submitButton">Submit discovery</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+<script src="{% static 'discovery/app.js' %}" data-initial-step="{{ error_step }}"></script>
+</body>
+</html>
