@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth import get_user_model
 from .models import DiscoveryResponse
 
 
@@ -46,3 +47,14 @@ class DiscoveryFormTests(TestCase):
         response = self.client.post(reverse("discovery_form"), valid_payload(company_site="spam"))
         self.assertEqual(response.status_code, 200)
         self.assertFalse(DiscoveryResponse.objects.exists())
+
+    def test_admin_can_open_response_list_and_detail(self):
+        self.client.post(reverse("discovery_form"), valid_payload())
+        user = get_user_model().objects.create_superuser("admin", "admin@example.test", "password")
+        self.client.force_login(user)
+        saved = DiscoveryResponse.objects.get()
+        list_response = self.client.get("/admin/discovery/discoveryresponse/")
+        detail_response = self.client.get(f"/admin/discovery/discoveryresponse/{saved.pk}/change/")
+        self.assertEqual(list_response.status_code, 200)
+        self.assertEqual(detail_response.status_code, 200)
+        self.assertContains(detail_response, "Sample Travel", status_code=200)
